@@ -8,6 +8,8 @@ from utilities.IBApi import IBApi
 from utilities.IBDataReciver import IBDataReciver
 
 from ibapi.client import BarData, TagValueList, TickerId, Contract
+from ibapi.scanner import ScanData, ScannerSubscription
+from ibapi.tag_value import TagValue
 
 class App():
     def __init__(self) -> None:
@@ -26,6 +28,23 @@ class App():
         time.sleep(1)
 
     def request_historical_bars(self, reqId: TickerId, contract: Contract, endDateTime: str, durationStr: str, barSizeSetting: str, whatToShow: str, useRTH: int, formatDate: int, keepUpToDate: bool, chartOptions: TagValueList) -> list[BarData] or None:
+        self.event_thread.clear()
         self.ibapi.reqHistoricalData(reqId, contract, endDateTime, durationStr, barSizeSetting, whatToShow, useRTH, formatDate, keepUpToDate, chartOptions)
         self.event_thread.wait()
-        return self.data_reciever.get_historical_bars()
+
+        results = self.data_reciever.get_historical_bars()
+        self.data_reciever.clear_historical_bars()
+        return results
+    
+    def request_scanner_results(self, reqId: TickerId, subscription: ScannerSubscription, scannerSubscriptionOptions: list[TagValue], scannerSubscriptionFilterOptions: list[TagValue]) -> list[ScanData] or None:
+        self.event_thread.clear()
+        self.ibapi.reqScannerSubscription(reqId, subscription, scannerSubscriptionOptions, scannerSubscriptionFilterOptions)
+        self.event_thread.wait()
+
+        self.event_thread.clear()
+        self.ibapi.cancelScannerSubscription(reqId)
+        self.event_thread.wait()
+
+        results = self.data_reciever.get_scanner_results()
+        self.data_reciever.clear_scanner_results()
+        return results
