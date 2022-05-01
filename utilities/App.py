@@ -48,3 +48,12 @@ class App():
         results = self.data_reciever.get_scanner_results()
         self.data_reciever.clear_scanner_results()
         return results
+    
+    def request_account_summary(self, reqId: TickerId, groupName: str, tags: str):
+        self.event_thread.clear()
+        self.ibapi.reqAccountSummary(reqId, groupName, tags)
+        self.event_thread.wait()
+
+        results = self.data_reciever.get_account_summary_tags()
+        self.data_reciever.clear_account_summary_tags()
+        return results
