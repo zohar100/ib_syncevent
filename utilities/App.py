@@ -53,6 +53,10 @@ class App():
         self.event_thread.clear()
         self.ibapi.reqAccountSummary(reqId, groupName, tags)
         self.event_thread.wait()
+        
+        self.event_thread.clear()
+        self.ibapi.cancelAccountSummary(reqId)
+        self.event_thread.wait()
 
         results = self.data_reciever.get_account_summary_tags()
         self.data_reciever.clear_account_summary_tags()
