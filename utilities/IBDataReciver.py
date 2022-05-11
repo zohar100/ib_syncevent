@@ -10,7 +10,7 @@ class IBDataReciver():
 
         self.scanner_results: list[ScanData] = []
 
-        self.account_summary_tags: list[TagValue] = []
+        self.account_summary_tag: TagValue = None
     
     def get_historical_bars(self) -> list[BarData]:
         return self.historical_bars
@@ -30,11 +30,11 @@ class IBDataReciver():
     def append_scanner_result(self, scanner_result: ScanData) -> None:
         self.scanner_results.append(scanner_result)
     
-    def get_account_summary_tags(self) -> list[TagValue]:
-        return self.account_summary_tags   
+    def get_account_summary_tag(self) -> TagValue:
+        return self.account_summary_tag   
     
-    def clear_account_summary_tags(self) -> None:
-        self.account_summary_tags = []
+    def clear_account_summary_tag(self) -> None:
+        self.account_summary_tag = None
     
-    def append_account_summary_tag(self, account_summary_tag: TagValue) -> None:
-        self.account_summary_tags.append(account_summary_tag)
+    def set_account_summary_tag(self, account_summary_tag: TagValue) -> None:
+        self.account_summary_tag = account_summary_tag
