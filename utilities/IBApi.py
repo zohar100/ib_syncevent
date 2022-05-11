@@ -9,14 +9,14 @@ from ibapi.contract import ContractDetails
 from ibapi.scanner import ScanData
 from ibapi.tag_value import TagValue
 
-from utilities.Enums import Events
-from utilities.IBDataReciver import IBDataReciver
-from utilities.IBHandlers import IBHandlers
+from .Enums import Events
+from .IBDataReciver import IBDataReciver
+from .IBEvents import IBEvents
 
 
 class IBApi(EWrapper, EClient):
 
-    def __init__(self, events_thread: dict[Events, threading.Event], global_state: IBDataReciver, ib_handlers: IBHandlers) -> None:
+    def __init__(self, events_thread: dict[Events, threading.Event], global_state: IBDataReciver, ib_handlers: IBEvents) -> None:
 
         self.global_state = global_state
 
@@ -30,8 +30,8 @@ class IBApi(EWrapper, EClient):
         EClient.__init__(self, self)
 
     def historicalData(self, reqId: int, bar: BarData) -> None:
-        if self.ib_handlers.historical_bars_handler:
-            self.ib_handlers.historical_bars_handler(bar)
+        if self.ib_handlers.historical_bars_event:
+            self.ib_handlers.historical_bars_event(bar)
         else:
             self.global_state.append_historical_bar(bar)
 

@@ -4,10 +4,10 @@ from __future__ import annotations
 import time
 import threading
 
-from utilities.IBDataReciver import IBDataReciver
-from utilities.IBHandlers import IBHandlers
-from utilities.Enums import Events
-from utilities.IBApi import IBApi
+from .utilities import IBDataReciver
+from .utilities import IBEvents
+from .utilities import Events
+from .utilities import IBApi
 
 from ibapi.client import BarData, TagValueList, TickerId, Contract
 from ibapi.scanner import ScanData, ScannerSubscription
@@ -15,10 +15,10 @@ from ibapi.tag_value import TagValue
 
 
 class App():
-    def __init__(self, ib_handlers: IBHandlers) -> None:
+    def __init__(self) -> None:
         self.global_state = IBDataReciver()
 
-        self.ib_handlers = ib_handlers
+        self.ib_handlers = IBEvents()
 
         self.events_thread = {
             Events.MAIN: threading.Event(),
@@ -42,7 +42,7 @@ class App():
                                      barSizeSetting, whatToShow, useRTH, formatDate, keepUpToDate, chartOptions)
         self.events_thread[Events.MAIN].wait()
 
-        if not self.ib_handlers.historical_bars_handler:
+        if not self.ib_handlers.historical_bars_event:
             results = self.global_state.get_historical_bars()
             self.global_state.clear_historical_bars()
             return results
