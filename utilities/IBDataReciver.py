@@ -2,12 +2,15 @@ from __future__ import annotations
 
 from ibapi.client import BarData
 from ibapi.scanner import ScanData
+from ibapi.tag_value import TagValue
 
 class IBDataReciver():
     def __init__(self) -> None:
         self.historical_bars: list[BarData] = []
 
         self.scanner_results: list[ScanData] = []
+
+        self.account_summary_tag: TagValue = None
     
     def get_historical_bars(self) -> list[BarData]:
         return self.historical_bars
@@ -26,3 +29,12 @@ class IBDataReciver():
     
     def append_scanner_result(self, scanner_result: ScanData) -> None:
         self.scanner_results.append(scanner_result)
+    
+    def get_account_summary_tag(self) -> TagValue:
+        return self.account_summary_tag   
+    
+    def clear_account_summary_tag(self) -> None:
+        self.account_summary_tag = None
+    
+    def set_account_summary_tag(self, account_summary_tag: TagValue) -> None:
+        self.account_summary_tag = account_summary_tag
