@@ -14,7 +14,7 @@ from ibapi.scanner import ScanData, ScannerSubscription
 from ibapi.tag_value import TagValue
 
 
-class App():
+class IBSyncEvent():
     def __init__(self) -> None:
         self.global_state = IBDataReciver()
 
