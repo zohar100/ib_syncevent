@@ -16,7 +16,7 @@ setup(
     name="ib_syncevent",
     version=VERSION,
     author="Zohar",
-    author_email="<mail@neuralnine.com>",
+    author_email="<mail@test.com>",
     description=DESCRIPTION,
     long_description_content_type="text/markdown",
     packages=find_packages(),
