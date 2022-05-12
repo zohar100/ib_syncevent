@@ -19,9 +19,9 @@ setup(
     author_email="<mail@neuralnine.com>",
     description=DESCRIPTION,
     long_description_content_type="text/markdown",
-    long_description=long_description,
     packages=find_packages(),
     install_requires=['ibapi'],
+    python_requires='>=3.8',
     keywords=['python', 'ib', 'financial', 'financial data', 'stcoks'],
     classifiers=[
         "Development Status :: 1 - Planning",
