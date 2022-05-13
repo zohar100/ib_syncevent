@@ -9,7 +9,7 @@ from .utilities import IBEvents
 from .utilities import Events
 from .utilities import IBApi
 
-from ibapi.client import BarData, TagValueList, TickerId, Contract
+from ibapi.client import BarData, TagValueList, TickerId, Contract, Order
 from ibapi.scanner import ScanData, ScannerSubscription
 from ibapi.tag_value import TagValue
 
@@ -73,3 +73,14 @@ class IBSyncEvent():
         results = self.global_state.get_account_summary_tag()
         self.global_state.clear_account_summary_tag()
         return results
+
+    def place_order(self, contract: Contract, order: Order or list[Order]) -> None:
+        self.events_thread[Events.MAIN].clear()
+        
+        if type(order) is not list:
+            self.ibapi.placeOrder(contract, order)
+            return
+
+        for o in order:
+            self.ibapi.placeOrder(contract, o)
+            return
