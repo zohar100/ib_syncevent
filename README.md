@@ -8,7 +8,7 @@ Get financial data synchronously. This package is a wrapper around the IB API.
 pip install ib-syncevent
 ```
 
-## Exaple (get historical data)
+## Example (get historical data)
 ```python
 from ib_syncevent import IBSyncEvent, IBHelpers
 
