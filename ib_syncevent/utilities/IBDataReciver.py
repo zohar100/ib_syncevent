@@ -4,13 +4,20 @@ from ibapi.client import BarData
 from ibapi.scanner import ScanData
 from ibapi.tag_value import TagValue
 
+from .Enums import Events
+
 class IBDataReciver():
     def __init__(self) -> None:
+        self.service = None
+
         self.historical_bars: list[BarData] = []
 
         self.scanner_results: list[ScanData] = []
 
         self.account_summary_tag: TagValue = None
+    
+    def set_service(self, service_name: Events):
+        self.service = service_name
     
     def get_historical_bars(self) -> list[BarData]:
         return self.historical_bars
