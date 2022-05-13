@@ -3,7 +3,7 @@ from __future__ import annotations
 from ibapi.client import Contract, Order
 from ibapi.scanner import ScannerSubscription
 
-from utilities import Actions
+from .utilities import Actions
 
 
 class IBHelpers():
