@@ -35,7 +35,7 @@ class IBApi(EWrapper, EClient):
         print(
             f"ERROR [{self.global_state.service}] [{reqId}] [{errorCode}] [{errorString}]")
         if self.global_state.service == Events.HISTORICAL_DATA.value:
-            self.events_thread[Events.HISTORICAL_DATA].set()
+            self.event_thread[Events.HISTORICAL_DATA].set()
 
     def historicalData(self, reqId: int, bar: BarData) -> None:
         if self.ib_handlers.historical_bars_event:
