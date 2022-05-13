@@ -22,7 +22,6 @@ class IBHelpers():
         scanner.instrument = instrument
         scanner.locationCode = locationCode
         scanner.numberOfRows = numberOfRows
-        # HIGH_OPEN_GAP - for buy positions /// LOW_OPEN_GAP - for sell positions
         scanner.abovePrice = abovePrice
         scanner.aboveVolume = aboveVolume
         return scanner
