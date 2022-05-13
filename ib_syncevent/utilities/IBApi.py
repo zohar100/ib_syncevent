@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 import threading
+from decimal import Decimal
 
-from ibapi.client import EClient  # Connect between our program to IBAPI
+from ibapi.client import EClient, Order, Contract
 from ibapi.wrapper import EWrapper
 from ibapi.client import BarData
 from ibapi.contract import ContractDetails
 from ibapi.scanner import ScanData
 from ibapi.tag_value import TagValue
+from ibapi.order_state import OrderState
 
 from .Enums import Events
 from .IBDataReciver import IBDataReciver
@@ -53,3 +55,14 @@ class IBApi(EWrapper, EClient):
 
     def accountSummaryEnd(self, reqId: int):
         self.event_thread[Events.SECONDARY].set()
+    
+    def orderStatus(self, orderId: int, status: str, filled: Decimal,
+                    remaining: Decimal, avgFillPrice: float, permId: int,
+                    parentId: int, lastFillPrice: float, clientId: int,
+                    whyHeld: str, mktCapPrice: float):
+        if self.ib_handlers.order_status:
+            self.ib_handlers.order_status(orderId, status, filled, remaining, avgFillPrice, permId, parentId, lastFillPrice, clientId, whyHeld, mktCapPrice)
+    
+    def openOrder(self, orderId: int, contract: Contract, order: Order, orderState: OrderState):
+        if self.ib_handlers.open_order:
+            self.ib_handlers.open_order(orderId, contract, order, orderState)
