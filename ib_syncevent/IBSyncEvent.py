@@ -20,9 +20,13 @@ class IBSyncEvent():
 
         self.ib_handlers = IBEvents()
 
+        self.service = None
+
         self.events_thread = {
-            Events.MAIN: threading.Event(),
-            Events.SECONDARY: threading.Event()
+            Events.HISTORICAL_DATA: threading.Event(),
+            Events.SCANNER_DATA: threading.Event(),
+            Events.ACCOUNT_DATA: threading.Event(),
+            Events.CANCEL_DATA: threading.Event(),
         }
 
         self.ibapi = IBApi(self.events_thread,
@@ -30,6 +34,14 @@ class IBSyncEvent():
 
         self.connection_thread = threading.Thread(
             target=self.ibapi.run, daemon=True)
+    
+    def error(self, reqId: int, errorCode: int, errorString: str):
+        if self.service:
+            print(f"ERROR [{self.service}] [{reqId}] [{errorCode}] [{errorString}]")
+            if self.events_thread[self.service]:
+                self.events_thread[self.service].set()
+        else:
+            print(f"ERROR [{reqId}] [{errorCode}] [{errorString}]")
 
     def connect(self, host: str, port: int, conId: int) -> None:
         self.ibapi.connect(host, port, conId)
@@ -37,10 +49,12 @@ class IBSyncEvent():
         time.sleep(1)
 
     def request_historical_bars(self, reqId: TickerId, contract: Contract, endDateTime: str, durationStr: str, barSizeSetting: str, whatToShow: str, useRTH: int, formatDate: int, keepUpToDate: bool, chartOptions: TagValueList) -> list[BarData] or None:
-        self.events_thread[Events.MAIN].clear()
+        self.service = Events.HISTORICAL_DATA
+
+        self.events_thread[Events.HISTORICAL_DATA].clear()
         self.ibapi.reqHistoricalData(reqId, contract, endDateTime, durationStr,
                                      barSizeSetting, whatToShow, useRTH, formatDate, keepUpToDate, chartOptions)
-        self.events_thread[Events.MAIN].wait()
+        self.events_thread[Events.HISTORICAL_DATA].wait()
 
         if not self.ib_handlers.historical_bars_event:
             results = self.global_state.get_historical_bars()
@@ -48,35 +62,39 @@ class IBSyncEvent():
             return results
 
     def request_scanner_results(self, reqId: TickerId, subscription: ScannerSubscription, scannerSubscriptionOptions: list[TagValue], scannerSubscriptionFilterOptions: list[TagValue]) -> list[ScanData] or None:
-        self.events_thread[Events.MAIN].clear()
+        self.service = Events.SCANNER_DATA
+
+        self.events_thread[Events.SCANNER_DATA].clear()
         self.ibapi.reqScannerSubscription(
             reqId, subscription, scannerSubscriptionOptions, scannerSubscriptionFilterOptions)
-        self.events_thread[Events.MAIN].wait()
+        self.events_thread[Events.SCANNER_DATA].wait()
 
-        self.events_thread[Events.SECONDARY].clear()
+        self.events_thread[Events.CANCEL_DATA].clear()
         self.ibapi.cancelScannerSubscription(reqId)
-        self.events_thread[Events.SECONDARY].wait()
+        self.events_thread[Events.CANCEL_DATA].wait()
 
         results = self.global_state.get_scanner_results()
         self.global_state.clear_scanner_results()
         return results
 
     def request_account_summary(self, reqId: TickerId, groupName: str, tags: str) -> TagValue or None:
-        self.events_thread[Events.MAIN].clear()
-        self.ibapi.reqAccountSummary(reqId, groupName, tags)
-        self.events_thread[Events.MAIN].wait()
+        self.service = Events.ACCOUNT_DATA
 
-        self.events_thread[Events.SECONDARY].clear()
+        self.events_thread[Events.ACCOUNT_DATA].clear()
+        self.ibapi.reqAccountSummary(reqId, groupName, tags)
+        self.events_thread[Events.ACCOUNT_DATA].wait()
+
+        self.events_thread[Events.CANCEL_DATA].clear()
         self.ibapi.cancelAccountSummary(reqId)
-        self.events_thread[Events.SECONDARY].wait()
+        self.events_thread[Events.CANCEL_DATA].wait()
 
         results = self.global_state.get_account_summary_tag()
         self.global_state.clear_account_summary_tag()
         return results
 
-    def place_order(self, contract: Contract, order: Order or list[Order]) -> None:
-        self.events_thread[Events.MAIN].clear()
-        
+    def place_order(self, contract: Contract, order: Order or list[Order]) -> None:        
+        self.service = Events.ORDER_DATA
+
         if type(order) is not list:
             self.ibapi.placeOrder(contract, order)
             return
