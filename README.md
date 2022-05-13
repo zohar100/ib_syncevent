@@ -23,8 +23,6 @@ Request AAPL data, 60 seconds bar size 2022/05/12 16:59:00
 contract = IBHelpers.create_contract(
     symbol="AAPL", sec_type="STK", exchange="SMART", primaryExchange="ISLAND", currency="USD")
 
-# contract.conId = 265598
-
 end_date_time = "20220512 17:00:00"
 
 historical_bars = app.request_historical_bars(
