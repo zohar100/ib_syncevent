@@ -11,8 +11,8 @@ class IBHelpers():
         contract = Contract()
         contract.symbol = symbol
         contract.secType = sec_type
-        contract.exchange = exchange  # Give us the best price
-        contract.primaryExchange = primaryExchange  # avoid 162 ambiguity error
+        contract.exchange = exchange
+        contract.primaryExchange = primaryExchange
         contract.currency = currency
         return contract
 
