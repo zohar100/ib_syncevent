@@ -38,23 +38,23 @@ class IBApi(EWrapper, EClient):
             self.global_state.append_historical_bar(bar)
 
     def historicalDataEnd(self, reqId: int, start: str, end: str) -> None:
-        self.event_thread[Events.MAIN].set()
+        self.event_thread[Events.HISTORICAL_DATA].set()
 
     def scannerData(self, reqId: int, rank: int, contractDetails: ContractDetails, distance: str, benchmark: str, projection: str, legsStr: str):
         scan_data = ScanData(
             contractDetails.contract, rank, distance, benchmark, projection, legsStr)
         self.global_state.append_scanner_result(scan_data)
-        self.event_thread[Events.MAIN].set()
+        self.event_thread[Events.SCANNER_DATA].set()
 
     def scannerDataEnd(self, reqId: int):
-        self.event_thread[Events.SECONDARY].set()
+        self.event_thread[Events.CANCEL_DATA].set()
 
     def accountSummary(self, reqId: int, account: str, tag: str, value: str, currency: str):
         self.global_state.set_account_summary_tag(TagValue(tag, value))
-        self.event_thread[Events.MAIN].set()
+        self.event_thread[Events.ACCOUNT_DATA].set()
 
     def accountSummaryEnd(self, reqId: int):
-        self.event_thread[Events.SECONDARY].set()
+        self.event_thread[Events.CANCEL_DATA].set()
     
     def orderStatus(self, orderId: int, status: str, filled: Decimal,
                     remaining: Decimal, avgFillPrice: float, permId: int,
