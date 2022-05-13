@@ -34,12 +34,13 @@ class IBSyncEvent():
 
         self.connection_thread = threading.Thread(
             target=self.ibapi.run, daemon=True)
-    
+
     def error(self, reqId: int, errorCode: int, errorString: str):
         if self.service:
-            print(f"ERROR [{self.service}] [{reqId}] [{errorCode}] [{errorString}]")
-            if self.events_thread[self.service]:
-                self.events_thread[self.service].set()
+            print(
+                f"ERROR [{self.service}] [{reqId}] [{errorCode}] [{errorString}]")
+            if self.service == Events.HISTORICAL_DATA:
+                self.events_thread[Events.HISTORICAL_DATA].set()
         else:
             print(f"ERROR [{reqId}] [{errorCode}] [{errorString}]")
 
@@ -92,7 +93,7 @@ class IBSyncEvent():
         self.global_state.clear_account_summary_tag()
         return results
 
-    def place_order(self, contract: Contract, order: Order or list[Order]) -> None:        
+    def place_order(self, contract: Contract, order: Order or list[Order]) -> None:
         self.service = Events.ORDER_DATA
 
         if type(order) is not list:
