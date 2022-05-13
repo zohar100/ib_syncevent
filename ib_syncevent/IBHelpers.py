@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from ibapi.client import Contract, Order
 from ibapi.scanner import ScannerSubscription
+from ibapi.tag_value import TagValue
 
 from .utilities import Actions
 
@@ -25,6 +26,12 @@ class IBHelpers():
         scanner.abovePrice = abovePrice
         scanner.aboveVolume = aboveVolume
         return scanner
+
+    def create_tag_value(tag: str, value) -> TagValue:
+        tag_value = TagValue()
+        tag_value.tag = tag
+        tag_value.value = value
+        return tag_value
 
     def create_bracket_order(order_id: int, action: Actions, order_type: str, total_quantity: float, aux_price: float, lmt_price: float) -> Order:
         parent = Order()
