@@ -31,6 +31,12 @@ class IBApi(EWrapper, EClient):
         # Initial Eclient
         EClient.__init__(self, self)
 
+    def error(self, reqId: int, errorCode: int, errorString: str):
+        print(
+            f"ERROR [{self.global_state.service}] [{reqId}] [{errorCode}] [{errorString}]")
+        if self.global_state.service == Events.HISTORICAL_DATA.value:
+            self.events_thread[Events.HISTORICAL_DATA].set()
+
     def historicalData(self, reqId: int, bar: BarData) -> None:
         if self.ib_handlers.historical_bars_event:
             self.ib_handlers.historical_bars_event(bar)
@@ -55,14 +61,15 @@ class IBApi(EWrapper, EClient):
 
     def accountSummaryEnd(self, reqId: int):
         self.event_thread[Events.CANCEL_DATA].set()
-    
+
     def orderStatus(self, orderId: int, status: str, filled: Decimal,
                     remaining: Decimal, avgFillPrice: float, permId: int,
                     parentId: int, lastFillPrice: float, clientId: int,
                     whyHeld: str, mktCapPrice: float):
         if self.ib_handlers.order_status:
-            self.ib_handlers.order_status(orderId, status, filled, remaining, avgFillPrice, permId, parentId, lastFillPrice, clientId, whyHeld, mktCapPrice)
-    
+            self.ib_handlers.order_status(orderId, status, filled, remaining, avgFillPrice,
+                                          permId, parentId, lastFillPrice, clientId, whyHeld, mktCapPrice)
+
     def openOrder(self, orderId: int, contract: Contract, order: Order, orderState: OrderState):
         if self.ib_handlers.open_order:
             self.ib_handlers.open_order(orderId, contract, order, orderState)
