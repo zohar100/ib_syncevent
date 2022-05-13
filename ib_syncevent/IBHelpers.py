@@ -5,7 +5,8 @@ from ibapi.scanner import ScannerSubscription
 
 from utilities import Actions
 
-class IBHelpers():#
+
+class IBHelpers():
     def create_contract(symbol: str, sec_type: str, exchange: str, primaryExchange: str, currency: str) -> Contract:
         contract = Contract()
         contract.symbol = symbol
@@ -25,7 +26,16 @@ class IBHelpers():#
         scanner.abovePrice = abovePrice
         scanner.aboveVolume = aboveVolume
         return scanner
-    
+
+    def create_bracket_order(order_id: int, action: Actions, order_type: str, total_quantity: float, aux_price: float, lmt_price: float) -> Order:
+        parent = Order()
+        parent.orderId = order_id
+        parent.action = action
+        parent.orderType = order_type
+        parent.totalQuantity = total_quantity
+        parent.auxPrice = aux_price
+        parent.lmtPrice = lmt_price
+
     def create_bracket_order(order_id: int, action: Actions, quantity: float, lmt_price: float, sl_price: float, tp_price: float, group_name: str) -> list[Order]:
         parent = Order()
         parent.orderId = order_id
