@@ -36,6 +36,11 @@ class IBApi(EWrapper, EClient):
             f"ERROR [{self.global_state.service}] [{reqId}] [{errorCode}] [{errorString}]")
         if self.global_state.service == Events.HISTORICAL_DATA.value:
             self.event_thread[Events.HISTORICAL_DATA].set()
+    
+    def nextValidId(self, orderId):
+        super().nextValidId(orderId)
+        self.nextValidOrderId = orderId
+        print("NextValidId:", orderId)
 
     def historicalData(self, reqId: int, bar: BarData) -> None:
         if self.ib_handlers.historical_bars_event:
