@@ -32,11 +32,14 @@ class IBApi(EWrapper, EClient):
         EClient.__init__(self, self)
 
     def error(self, reqId: int, errorCode: int, errorString: str):
+        service = self.global_state.service if self.global_state.service else 'IBApi'
         print(
-            f"ERROR [{self.global_state.service}] [{reqId}] [{errorCode}] [{errorString}]")
+            f"ERROR [{service}] [{reqId}] [{errorCode}] [{errorString}]")
         if self.global_state.service == Events.HISTORICAL_DATA.value:
             self.event_thread[Events.HISTORICAL_DATA].set()
-    
+        if self.global_state.service == Events.SCANNER_DATA.value:
+            self.event_thread[Events.CANCEL_DATA].set()
+
     def nextValidId(self, orderId):
         super().nextValidId(orderId)
         self.nextValidOrderId = orderId
