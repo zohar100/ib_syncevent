@@ -82,13 +82,8 @@ class IBSyncEvent():
         self.global_state.clear_account_summary_tag()
         return results
 
-    def place_order(self, contract: Contract, order: Order or list[Order]) -> None:
+    def place_order(self, reqId: TickerId, contract: Contract, order: Order) -> None:
         self.global_state.set_service(Events.ORDER_DATA.value)
 
-        if type(order) is not list:
-            self.ibapi.placeOrder(contract, order)
-            return
-
-        for o in order:
-            self.ibapi.placeOrder(contract, o)
-            return
+        self.ibapi.placeOrder(reqId, contract, order)
+        return
