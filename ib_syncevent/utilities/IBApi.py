@@ -68,7 +68,7 @@ class IBApi(EWrapper, EClient):
         self.event_thread[Events.ACCOUNT_DATA].set()
 
     def accountSummaryEnd(self, reqId: int):
-        self.event_thread[Events.CANCEL_DATA].set()
+        pass
 
     def orderStatus(self, orderId: int, status: str, filled: Decimal,
                     remaining: Decimal, avgFillPrice: float, permId: int,
