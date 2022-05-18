@@ -74,9 +74,7 @@ class IBSyncEvent():
         self.ibapi.reqAccountSummary(reqId, groupName, tags)
         self.events_thread[Events.ACCOUNT_DATA].wait()
 
-        self.events_thread[Events.CANCEL_DATA].clear()
         self.ibapi.cancelAccountSummary(reqId)
-        self.events_thread[Events.CANCEL_DATA].wait()
 
         results = self.global_state.get_account_summary_tag()
         self.global_state.clear_account_summary_tag()
