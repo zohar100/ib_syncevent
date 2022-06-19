@@ -60,14 +60,31 @@ class IBSyncEvent():
 
         self.connection_thread = threading.Thread(
             target=self.ibapi.run, daemon=True)
-
+        
+        self.host = None
+        self.port = None
+        self.conId = None
+    
     def connect(self, host: str, port: int, conId: int) -> None:
+        self.host = host
+        self.port = port
+        self.conId = conId
         self.ibapi.connect(host, port, conId)
         self.connection_thread.start()
         time.sleep(1)
 
+    def wait_for_connection(self):
+        if not self.ibapi.isConnected():
+            while not self.ibapi.isConnected():
+                print('[IBSyncEvent] waiting for api connection...')
+                time.sleep(30)
+                self.ibapi.connect(self.host, self.port, self.conId)
+                self.connection_thread = threading.Thread(target=self.ibapi.run,name='TradingApp')
+                self.connection_thread.start()
+            return
+
     @timeout(60)
-    def request_historical_bars(self, reqId: TickerId, contract: Contract, endDateTime: str, durationStr: str, barSizeSetting: str, whatToShow: str, useRTH: int, formatDate: int, keepUpToDate: bool, chartOptions: TagValueList) -> list[BarData] or None:
+    def request_historical_bars_from_ib(self, reqId: TickerId, contract: Contract, endDateTime: str, durationStr: str, barSizeSetting: str, whatToShow: str, useRTH: int, formatDate: int, keepUpToDate: bool, chartOptions: TagValueList) -> list[BarData] or None:
         self.global_state.set_service(Events.HISTORICAL_DATA.value)
 
         self.events_thread[Events.HISTORICAL_DATA].clear()
@@ -79,6 +96,11 @@ class IBSyncEvent():
             results = self.global_state.get_historical_bars()
             self.global_state.clear_historical_bars()
             return results
+    
+    def request_historical_bars(self, reqId: TickerId, contract: Contract, endDateTime: str, durationStr: str, barSizeSetting: str, whatToShow: str, useRTH: int, formatDate: int, keepUpToDate: bool, chartOptions: TagValueList) -> list[BarData] or None:
+        self.wait_for_connection()
+        return self.request_historical_bars_from_ib(reqId, contract, endDateTime, durationStr,
+                                     barSizeSetting, whatToShow, useRTH, formatDate, keepUpToDate, chartOptions)
 
     def request_scanner_results(self, reqId: TickerId, subscription: ScannerSubscription, scannerSubscriptionOptions: list[TagValue], scannerSubscriptionFilterOptions: list[TagValue]) -> list[ScanData] or None:
         self.global_state.set_service(Events.SCANNER_DATA.value)
