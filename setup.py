@@ -20,7 +20,7 @@ setup(
     description=DESCRIPTION,
     long_description_content_type="text/markdown",
     packages=find_packages(),
-    install_requires=['ibapi'],
+    install_requires=['ibapi', 'wrapt-timeout-decorator'],
     python_requires='>=3.8',
     keywords=['python', 'ib', 'financial', 'financial data', 'stcoks'],
     classifiers=[
