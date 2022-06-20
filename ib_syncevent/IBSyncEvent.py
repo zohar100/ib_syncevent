@@ -99,8 +99,13 @@ class IBSyncEvent():
     
     def request_historical_bars(self, reqId: TickerId, contract: Contract, endDateTime: str, durationStr: str, barSizeSetting: str, whatToShow: str, useRTH: int, formatDate: int, keepUpToDate: bool, chartOptions: TagValueList) -> list[BarData] or None:
         self.wait_for_connection()
-        return self.request_historical_bars_from_ib(reqId, contract, endDateTime, durationStr,
-                                     barSizeSetting, whatToShow, useRTH, formatDate, keepUpToDate, chartOptions)
+        try: 
+            bars = self.request_historical_bars_from_ib(reqId, contract, endDateTime, durationStr,
+                                        barSizeSetting, whatToShow, useRTH, formatDate, keepUpToDate, chartOptions)
+            return bars
+        except Exception as e:
+            self.ibapi.cancelHistoricalData(reqId)
+            raise e
 
     def request_scanner_results(self, reqId: TickerId, subscription: ScannerSubscription, scannerSubscriptionOptions: list[TagValue], scannerSubscriptionFilterOptions: list[TagValue]) -> list[ScanData] or None:
         self.global_state.set_service(Events.SCANNER_DATA.value)
