@@ -7,6 +7,7 @@ class Events(Enum):
     ACCOUNT_DATA = "ACCOUNT_DATA"
     CANCEL_DATA = "CANCEL_DATA"
     ORDER_DATA = "ORDER_DATA"
+    TIMESTAMP_DATA = "TIMESTAMP_DATA"
 
 class Actions(Enum):
     BUY = "BUY"

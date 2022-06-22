@@ -15,6 +15,8 @@ class IBDataReciver():
         self.scanner_results: list[ScanData] = []
 
         self.account_summary_tag: TagValue = None
+
+        self.head_time_stamp: str = None 
     
     def set_service(self, service_name: Events):
         self.service = service_name
@@ -45,3 +47,12 @@ class IBDataReciver():
     
     def set_account_summary_tag(self, account_summary_tag: TagValue) -> None:
         self.account_summary_tag = account_summary_tag
+    
+    def get_time_stamp(self) -> str:
+        return self.head_time_stamp
+    
+    def clear_time_stamp(self) -> None:
+        self.head_time_stamp = None
+    
+    def set_time_stamp(self, head_time_stamp: str):
+        self.head_time_stamp = head_time_stamp
