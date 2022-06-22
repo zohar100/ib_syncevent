@@ -81,3 +81,7 @@ class IBApi(EWrapper, EClient):
     def openOrder(self, orderId: int, contract: Contract, order: Order, orderState: OrderState):
         if self.ib_handlers.open_order:
             self.ib_handlers.open_order(orderId, contract, order, orderState)
+    
+    def headTimestamp(self, reqId:int, headTimestamp:str):
+        self.global_state.set_time_stamp(headTimestamp)
+        self.event_thread[Events.TIMESTAMP_DATA.value].set()

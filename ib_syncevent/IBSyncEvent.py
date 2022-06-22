@@ -53,6 +53,7 @@ class IBSyncEvent():
             Events.SCANNER_DATA: threading.Event(),
             Events.ACCOUNT_DATA: threading.Event(),
             Events.CANCEL_DATA: threading.Event(),
+            Events.TIMESTAMP_DATA: threading.Event(),
         }
 
         self.ibapi = IBApi(self.events_thread,
@@ -84,7 +85,31 @@ class IBSyncEvent():
             return
 
     @timeout(60)
-    def request_historical_bars_from_ib(self, reqId: TickerId, contract: Contract, endDateTime: str, durationStr: str, barSizeSetting: str, whatToShow: str, useRTH: int, formatDate: int, keepUpToDate: bool, chartOptions: TagValueList) -> list[BarData] or None:
+    def request_head_time_stamp_sync(self, reqId: TickerId, contract: Contract, whatToShow: str, useRTH: int, formatDate: int):
+        self.global_state.set_service(Events.TIMESTAMP_DATA.value)
+
+        self.events_thread[Events.TIMESTAMP_DATA.value].clear()
+        self.ibapi.reqHeadTimeStamp(reqId, contract, whatToShow, useRTH, formatDate)
+        self.events_thread[Events.TIMESTAMP_DATA.value].wait()
+
+        self.ibapi.cancelHeadTimeStamp(reqId)
+
+        if not self.ib_handlers.time_stamp_event:
+            results = self.global_state.get_time_stamp()
+            self.global_state.clear_time_stamp()
+            return results
+    
+    def request_head_time_stamp(self, reqId: TickerId, contract: Contract, whatToShow: str, useRTH: int, formatDate: int):
+        self.wait_for_connection()
+        try: 
+            head_time_stamp = self.request_head_time_stamp_sync(reqId, contract, whatToShow, useRTH, formatDate)
+            return head_time_stamp
+        except Exception as e:
+            self.ibapi.cancelHeadTimeStamp(reqId)
+            raise e
+
+    @timeout(60)
+    def request_historical_bars_sync(self, reqId: TickerId, contract: Contract, endDateTime: str, durationStr: str, barSizeSetting: str, whatToShow: str, useRTH: int, formatDate: int, keepUpToDate: bool, chartOptions: TagValueList) -> list[BarData] or None:
         self.global_state.set_service(Events.HISTORICAL_DATA.value)
 
         self.events_thread[Events.HISTORICAL_DATA].clear()
@@ -100,7 +125,7 @@ class IBSyncEvent():
     def request_historical_bars(self, reqId: TickerId, contract: Contract, endDateTime: str, durationStr: str, barSizeSetting: str, whatToShow: str, useRTH: int, formatDate: int, keepUpToDate: bool, chartOptions: TagValueList) -> list[BarData] or None:
         self.wait_for_connection()
         try: 
-            bars = self.request_historical_bars_from_ib(reqId, contract, endDateTime, durationStr,
+            bars = self.request_historical_bars_sync(reqId, contract, endDateTime, durationStr,
                                         barSizeSetting, whatToShow, useRTH, formatDate, keepUpToDate, chartOptions)
             return bars
         except Exception as e:
