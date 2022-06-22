@@ -84,4 +84,4 @@ class IBApi(EWrapper, EClient):
     
     def headTimestamp(self, reqId:int, headTimestamp:str):
         self.global_state.set_time_stamp(headTimestamp)
-        self.event_thread[Events.TIMESTAMP_DATA.value].set()
+        self.event_thread[Events.TIMESTAMP_DATA].set()

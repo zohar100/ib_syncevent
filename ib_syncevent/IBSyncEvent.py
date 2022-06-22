@@ -88,9 +88,9 @@ class IBSyncEvent():
     def request_head_time_stamp_sync(self, reqId: TickerId, contract: Contract, whatToShow: str, useRTH: int, formatDate: int):
         self.global_state.set_service(Events.TIMESTAMP_DATA.value)
 
-        self.events_thread[Events.TIMESTAMP_DATA.value].clear()
+        self.events_thread[Events.TIMESTAMP_DATA].clear()
         self.ibapi.reqHeadTimeStamp(reqId, contract, whatToShow, useRTH, formatDate)
-        self.events_thread[Events.TIMESTAMP_DATA.value].wait()
+        self.events_thread[Events.TIMESTAMP_DATA].wait()
 
         self.ibapi.cancelHeadTimeStamp(reqId)
 
