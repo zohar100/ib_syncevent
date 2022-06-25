@@ -39,6 +39,8 @@ class IBApi(EWrapper, EClient):
             self.event_thread[Events.HISTORICAL_DATA].set()
         if self.global_state.service == Events.SCANNER_DATA.value:
             self.event_thread[Events.CANCEL_DATA].set()
+        if self.global_state.service == Events.TIMESTAMP_DATA.value:
+            self.event_thread[Events.TIMESTAMP_DATA].set()
 
     def nextValidId(self, orderId):
         super().nextValidId(orderId)
