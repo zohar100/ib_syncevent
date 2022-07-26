@@ -33,22 +33,13 @@ class IBHelpers():
         tag_value.value = value
         return tag_value
 
-    def create_bracket_order(order_id: int, action: Actions, order_type: str, total_quantity: float, aux_price: float, lmt_price: float) -> Order:
-        parent = Order()
-        parent.orderId = order_id
-        parent.action = action
-        parent.orderType = order_type
-        parent.totalQuantity = total_quantity
-        parent.auxPrice = aux_price
-        parent.lmtPrice = lmt_price
-
     def create_bracket_order(order_id: int, action: Actions, quantity: float, lmt_price: float, sl_price: float, tp_price: float, group_name: str) -> list[Order]:
         parent = Order()
         parent.orderId = order_id
         parent.action = action
-        parent.orderType = "STP"
+        parent.orderType = "LMT"
         parent.totalQuantity = quantity
-        parent.auxPrice = lmt_price
+        parent.lmtPrice = lmt_price
         parent.eTradeOnly = False
         parent.firmQuoteOnly = False
         parent.transmit = False
