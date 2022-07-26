@@ -7,7 +7,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 with codecs.open(os.path.join(here, "README.md"), encoding="utf-8") as fh:
     long_description = "\n" + fh.read()
 
-VERSION = '0.0.33'
+VERSION = '0.0.35'
 DESCRIPTION = 'Get financial data synchronously. This package is a wrapper around the IB API.'
 LONG_DESCRIPTION = 'A package that allows to get financial data from ib, in sync(event driven) and async way'
 
